@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% block title %}BMI Calculator - HealthMate AI{% endblock %}
+{% block content %}
+<div class="bmi-container">
+    <h2 class="mb-3">BMI Calculator</h2>
+    <p class="text-muted mb-4">Calculate your Body Mass Index (BMI) to understand your weight category and get personalized AI recommendations.</p>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="bmi-form" method="POST">
+                <!-- Unit Switcher -->
+                <div class="mb-3 text-center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="units" id="metric" value="metric" checked>
+                        <label class="form-check-label" for="metric">Metric (kg, cm)</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="units" id="imperial" value="imperial">
+                        <label class="form-check-label" for="imperial">Imperial (lbs, in)</label>
+                    </div>
+                </div>
+
+                <!-- NEW: Age and Gender Fields -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" min="2" max="120" placeholder="e.g., 25" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Weight and Height Fields -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label">Weight (<span id="weight-unit">kg</span>)</label>
+                        <input type="number" class="form-control" id="weight" name="weight" step="0.1" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="height" class="form-label">Height (<span id="height-unit">cm</span>)</label>
+                        <input type="number" class="form-control" id="height" name="height" step="0.1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-4">
+                    <i class="bi bi-calculator me-2"></i>Calculate BMI & Get AI Recommendations
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Display -->
+    {% if bmi is not none %}
+    <div class="card mt-4" id="results-card">
+        <div class="card-body text-center">
+            <h5 class="card-title">Your BMI Result</h5>
+            <div class="alert {{ category_class }} mt-3">
+                <p class="fs-4 mb-0">Your BMI is <strong>{{ "%.1f"|format(bmi) }}</strong></p>
+                <p class="fs-5 mb-0">This is considered: <strong>{{ category }}</strong></p>
+            </div>
+
+            <!-- NEW: Contextual Disclaimer for Age -->
+            {% if age_disclaimer %}
+            <div class="alert alert-info mt-3">
+                <strong>Important Note for Your Age:</strong>
+                <p class="mb-0">{{ age_disclaimer }}</p>
+            </div>
+            {% endif %}
+
+            <p class="text-muted small mt-2">
+                Disclaimer: BMI is a general guide and may not be accurate for athletes, pregnant women, the elderly, or very muscular individuals. Always consult a healthcare professional for health advice.
+            </p>
+        </div>
+    </div>
+
+    <!-- AI Recommendations Section -->
+    {% if ai_recommendations %}
+    <div class="card mt-4" id="ai-recommendations-card">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-robot me-2"></i>AI-Powered Health Recommendations
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="ai-recommendations-content">
+                {% set recommendations = ai_recommendations.split('\n') %}
+                {% for line in recommendations %}
+                    {% if line.strip() %}
+                        {% if line.startswith('**') and line.endswith('**') %}
+                            <h6 class="recommendation-section">{{ line[2:-2] }}</h6>
+                        {% elif line.startswith('- ') or line.startswith('• ') %}
+                            <div class="recommendation-item">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                {{ line[2:] }}
+                            </div>
+                        {% elif line.strip() %}
+                            <p class="recommendation-text">{{ line }}</p>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="alert alert-warning mt-3">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Important:</strong> These recommendations are generated by AI for educational purposes only. 
+                Always consult with a qualified healthcare professional for personalized medical advice and before making 
+                any significant changes to your diet, exercise routine, or lifestyle.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<style>
+/* BMI Calculator Specific Styles */
+.bmi-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#results-card {
+    animation: slideInUp 0.5s ease-out;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#ai-recommendations-card {
+    animation: slideInUp 0.5s ease-out 0.2s both;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ai-recommendations-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.recommendation-section {
+    color: #667eea;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.recommendation-section:first-child {
+    margin-top: 0;
+}
+
+.recommendation-item {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+}
+
+.recommendation-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.recommendation-text {
+    margin-bottom: 0.75rem;
+    color: #495057;
+}
+
+.ai-recommendations-content strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .bmi-container {
+        padding: 15px;
+    }
+    
+    .ai-recommendations-content {
+        font-size: 0.95rem;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const weightUnit = document.getElementById('weight-unit');
+    const heightUnit = document.getElementById('height-unit');
+    
+    function updateUnits() {
+        if (document.getElementById('metric').checked) {
+            weightUnit.textContent = 'kg';
+            heightUnit.textContent = 'cm';
+        } else {
+            weightUnit.textContent = 'lbs';
+            heightUnit.textContent = 'in';
+        }
+    }
+
+    document.querySelectorAll('input[name="units"]').forEach(radio => {
+        radio.addEventListener('change', updateUnits);
+    });
+
+    // If results are present, scroll to them
+    const resultsCard = document.getElementById('results-card');
+    if (resultsCard) {
+        resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // If AI recommendations are present, scroll to them after a delay
+    const aiRecommendationsCard = document.getElementById('ai-recommendations-card');
+    if (aiRecommendationsCard) {
+        setTimeout(() => {
+            aiRecommendationsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1000);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - HealthMate AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="display-5 fw-bold text-primary mb-0">Admin Dashboard</h2>
+            <p class="lead">Welcome, <span class="fw-semibold">{{ current_user.username }}</span>! Manage your application below.</p>
+        </div>
+        
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">User Management</h5>
+                    <p class="card-text">View, edit, and manage all users of the platform.</p>
+                    <a href="{{ url_for('routes.manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-bar-chart-fill display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">Site Analytics</h5>
+                    <p class="card-text">View usage statistics and platform analytics.</p>
+                    <a href="{{ url_for('routes.site_analytics') }}" class="btn btn-warning text-white">Go to Site Analytics</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-chat-dots-fill display-4 text-info mb-3"></i>
+                    <h5 class="card-title">Feedback</h5>
+                    <p class="card-text">Review user bug reports and feature suggestions.</p>
+                    <a href="{{ url_for('routes.admin_feedback') }}" class="btn btn-info text-white">View Feedback</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info shadow-sm">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <strong>Note:</strong> This area is restricted to administrators. Please use your privileges responsibly.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

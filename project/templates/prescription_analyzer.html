@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Prescription Analyzer - HealthMate AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8 text-center">
+            <h2 class="display-6 fw-bold text-primary mb-3">
+                <i class="bi bi-file-earmark-medical me-2"></i>
+                Prescription Analyzer
+            </h2>
+            <p class="lead text-muted">Upload a photo of your prescription to automatically extract medicine names and learn about their uses.</p>
+        </div>
+    </div>
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3 text-center">
+                        <label for="image" class="form-label fw-bold">Upload Prescription Image</label>
+                        <input class="form-control" type="file" id="image" name="image" accept="image/*">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <label for="medicine_name" class="form-label fw-bold">Medicine Name (optional)</label>
+                        <input class="form-control" type="text" id="medicine_name" name="medicine_name" placeholder="Enter a medicine name for direct lookup">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Analyze Prescription
+                        </button>
+                    </div>
+                </form>
+                {% if error %}
+                <div class="alert alert-danger mt-4">{{ error }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% if medicines %}
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-capsule me-2"></i>
+                        Medicines & Uses
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Medicine Name</th>
+                                    <th>Uses</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for med in medicines %}
+                                <tr>
+                                    <td class="fw-bold">{{ med.name }}</td>
+                                    <td>{{ med.uses }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Site Analytics - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-warning mb-4"><i class="bi bi-bar-chart-fill me-2"></i>Site Analytics</h2>
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card stat-card border-0 shadow-sm text-center">
+        <div class="card-body">
+          <div class="stat-icon mb-2"><i class="bi bi-people-fill display-6 text-primary"></i></div>
+          <div class="stat-value fw-bold fs-3">{{ total_users }}</div>
+          <div class="stat-label text-muted">Total Users</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card border-0 shadow-sm text-center">
+        <div class="card-body">
+          <div class="stat-icon mb-2"><i class="bi bi-person-check-fill display-6 text-success"></i></div>
+          <div class="stat-value fw-bold fs-3">{{ active_users }}</div>
+          <div class="stat-label text-muted">Active Users</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card border-0 shadow-sm text-center">
+        <div class="card-body">
+          <div class="stat-icon mb-2"><i class="bi bi-trophy-fill display-6 text-info"></i></div>
+          <div class="stat-value fw-bold fs-3">{{ total_challenges }}</div>
+          <div class="stat-label text-muted">Total Challenges</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card border-0 shadow-sm text-center">
+        <div class="card-body">
+          <div class="stat-icon mb-2"><i class="bi bi-lightbulb display-6 text-warning"></i></div>
+          <div class="stat-value fw-bold fs-3">{{ total_health_tips }}</div>
+          <div class="stat-label text-muted">Health Tips</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-gradient-info text-white">
+      <i class="bi bi-graph-up-arrow me-2"></i>Analytics Overview
+    </div>
+    <div class="card-body">
+      <canvas id="analyticsChart" height="80"></canvas>
+    </div>
+  </div>
+</div>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('analyticsChart').getContext('2d');
+const analyticsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ months|tojson }},
+        datasets: [
+            {
+                label: 'User Registrations',
+                data: {{ user_counts|tojson }},
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52,152,219,0.1)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#3498db',
+                borderWidth: 3
+            },
+            {
+                label: 'Total Activities',
+                data: {{ activity_counts|tojson }},
+                borderColor: '#27ae60',
+                backgroundColor: 'rgba(39,174,96,0.1)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#27ae60',
+                borderWidth: 3
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+                labels: {
+                    font: { size: 16 }
+                }
+            },
+            title: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Month',
+                    font: { size: 15 }
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Count',
+                    font: { size: 15 }
+                },
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %} 

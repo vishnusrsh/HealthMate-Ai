@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}Body Map Symptom Checker - HealthMate AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-4">
+                <h2 class="display-6 fw-bold text-primary">
+                    <i class="bi bi-search-heart me-2"></i>
+                    Body Map Symptom Checker
+                </h2>
+                <p class="lead text-muted">Click on the body part where you're experiencing symptoms to get personalized health insights.</p>
+            </div>
+
+            <!-- Body Map Section -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="text-center mb-3">
+                        <h5 class="fw-bold">Select Body Area</h5>
+                        <p class="text-muted small">Click on any body part to select symptoms</p>
+                    </div>
+                    
+                    <!-- Interactive Body Map -->
+                    <div class="body-map-container text-center">
+                        <svg id="bodyMap" width="300" height="600" viewBox="0 0 300 600" class="body-map-svg">
+                            <!-- Head -->
+                            <circle id="head" cx="150" cy="50" r="40" class="body-part" data-part="head" data-symptoms="headache,migraine,dizziness,vision problems,hearing issues,sinus pain"/>
+                            
+                            <!-- Neck -->
+                            <rect id="neck" x="140" y="90" width="20" height="30" class="body-part" data-part="neck" data-symptoms="neck pain,stiffness,swelling,hoarseness,difficulty swallowing"/>
+                            
+                            <!-- Chest -->
+                            <rect id="chest" x="100" y="120" width="100" height="80" class="body-part" data-part="chest" data-symptoms="chest pain,shortness of breath,cough,heartburn,rib pain"/>
+                            
+                            <!-- Arms -->
+                            <rect id="leftArm" x="50" y="130" width="40" height="120" class="body-part" data-part="leftArm" data-symptoms="arm pain,shoulder pain,elbow pain,wrist pain,hand pain,numbness"/>
+                            <rect id="rightArm" x="210" y="130" width="40" height="120" class="body-part" data-part="rightArm" data-symptoms="arm pain,shoulder pain,elbow pain,wrist pain,hand pain,numbness"/>
+                            
+                            <!-- Abdomen -->
+                            <rect id="abdomen" x="110" y="200" width="80" height="100" class="body-part" data-part="abdomen" data-symptoms="stomach pain,nausea,vomiting,bloating,indigestion,abdominal cramps"/>
+                            
+                            <!-- Pelvis -->
+                            <rect id="pelvis" x="120" y="300" width="60" height="40" class="body-part" data-part="pelvis" data-symptoms="pelvic pain,urinary issues,menstrual pain,prostate problems"/>
+                            
+                            <!-- Legs -->
+                            <rect id="leftLeg" x="80" y="340" width="35" height="200" class="body-part" data-part="leftLeg" data-symptoms="leg pain,knee pain,ankle pain,foot pain,swelling,cramps"/>
+                            <rect id="rightLeg" x="185" y="340" width="35" height="200" class="body-part" data-part="rightLeg" data-symptoms="leg pain,knee pain,ankle pain,foot pain,swelling,cramps"/>
+                            
+                            <!-- Back -->
+                            <rect id="back" x="100" y="120" width="100" height="180" class="body-part" data-part="back" data-symptoms="back pain,lower back pain,upper back pain,spine pain,muscle spasms"/>
+                            
+                            <!-- Labels -->
+                            <text x="150" y="45" text-anchor="middle" class="body-label">Head</text>
+                            <text x="150" y="105" text-anchor="middle" class="body-label">Neck</text>
+                            <text x="150" y="160" text-anchor="middle" class="body-label">Chest</text>
+                            <text x="70" y="190" text-anchor="middle" class="body-label">Left Arm</text>
+                            <text x="230" y="190" text-anchor="middle" class="body-label">Right Arm</text>
+                            <text x="150" y="250" text-anchor="middle" class="body-label">Abdomen</text>
+                            <text x="150" y="320" text-anchor="middle" class="body-label">Pelvis</text>
+                            <text x="97" y="440" text-anchor="middle" class="body-label">Left Leg</text>
+                            <text x="202" y="440" text-anchor="middle" class="body-label">Right Leg</text>
+                            <text x="150" y="210" text-anchor="middle" class="body-label">Back</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Symptoms Section -->
+            <div class="card shadow-sm border-0 mb-4" id="symptomsCard" style="display: none;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check me-2"></i>
+                        Selected Body Part: <span id="selectedPartName"></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Common Symptoms for this area:</label>
+                        <div id="symptomsList" class="d-flex flex-wrap gap-2">
+                            <!-- Symptoms will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="customSymptoms" class="form-label fw-bold">Additional Symptoms (optional):</label>
+                        <textarea class="form-control" id="customSymptoms" rows="3" placeholder="Describe any other symptoms you're experiencing..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" id="analyzeSymptoms">
+                            <i class="bi bi-search-heart me-2"></i>
+                            Analyze Symptoms
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="card shadow-sm border-0" id="resultsCard" style="display: none;">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard2-pulse me-2"></i>
+                        Symptom Analysis Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="analysisResults">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="alert alert-info mt-4">
+                <h6><i class="bi bi-info-circle me-2"></i>How to use the Body Map:</h6>
+                <ol class="mb-0">
+                    <li>Click on the body part where you're experiencing symptoms</li>
+                    <li>Select the specific symptoms from the list</li>
+                    <li>Add any additional symptoms in the text area</li>
+                    <li>Click "Analyze Symptoms" to get AI-powered health insights</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Analyzing your symptoms...</h5>
+                <p class="text-muted">Our AI is processing your health information</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bodyParts = document.querySelectorAll('.body-part');
+    const symptomsCard = document.getElementById('symptomsCard');
+    const selectedPartName = document.getElementById('selectedPartName');
+    const symptomsList = document.getElementById('symptomsList');
+    const analyzeBtn = document.getElementById('analyzeSymptoms');
+    const resultsCard = document.getElementById('resultsCard');
+    const analysisResults = document.getElementById('analysisResults');
+    const customSymptoms = document.getElementById('customSymptoms');
+    
+    let selectedSymptoms = [];
+    let currentBodyPart = '';
+
+    // Body part definitions
+    const bodyPartNames = {
+        'head': 'Head',
+        'neck': 'Neck',
+        'chest': 'Chest',
+        'leftArm': 'Left Arm',
+        'rightArm': 'Right Arm',
+        'abdomen': 'Abdomen',
+        'pelvis': 'Pelvis',
+        'leftLeg': 'Left Leg',
+        'rightLeg': 'Right Leg',
+        'back': 'Back'
+    };
+
+    // Click handler for body parts
+    bodyParts.forEach(part => {
+        part.addEventListener('click', function() {
+            // Reset previous selections
+            bodyParts.forEach(p => p.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            currentBodyPart = this.dataset.part;
+            const symptoms = this.dataset.symptoms.split(',');
+            
+            selectedPartName.textContent = bodyPartNames[currentBodyPart];
+            symptomsList.innerHTML = '';
+            selectedSymptoms = [];
+            
+            // Create symptom checkboxes
+            symptoms.forEach(symptom => {
+                const div = document.createElement('div');
+                div.className = 'form-check form-check-inline';
+                div.innerHTML = `
+                    <input class="form-check-input" type="checkbox" id="symptom_${symptom.trim()}" value="${symptom.trim()}">
+                    <label class="form-check-label" for="symptom_${symptom.trim()}">
+                        ${symptom.trim().replace(/([A-Z])/g, ' $1').trim()}
+                    </label>
+                `;
+                symptomsList.appendChild(div);
+                
+                // Add event listener to checkbox
+                const checkbox = div.querySelector('input');
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        selectedSymptoms.push(this.value);
+                    } else {
+                        selectedSymptoms = selectedSymptoms.filter(s => s !== this.value);
+                    }
+                });
+            });
+            
+            symptomsCard.style.display = 'block';
+            resultsCard.style.display = 'none';
+        });
+    });
+
+    // Analyze symptoms
+    analyzeBtn.addEventListener('click', function() {
+        if (selectedSymptoms.length === 0) {
+            alert('Please select at least one symptom.');
+            return;
+        }
+        
+        const customSymptomText = customSymptoms.value.trim();
+        const allSymptoms = [...selectedSymptoms];
+        if (customSymptomText) {
+            allSymptoms.push(customSymptomText);
+        }
+        
+        // Show loading modal
+        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+        loadingModal.show();
+        
+        // Send to backend for analysis
+        fetch('/body-map-analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                bodyPart: currentBodyPart,
+                symptoms: allSymptoms
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingModal.hide();
+            if (data.success) {
+                displayResults(data.analysis);
+            } else {
+                alert('Error analyzing symptoms: ' + data.error);
+            }
+        })
+        .catch(error => {
+            loadingModal.hide();
+            alert('Error analyzing symptoms. Please try again.');
+            console.error('Error:', error);
+        });
+    });
+
+    function displayResults(analysis) {
+        analysisResults.innerHTML = `
+            <div class="mb-3">
+                <h6 class="fw-bold text-primary">Analysis Summary:</h6>
+                <p>${analysis.summary}</p>
+            </div>
+            <div class="mb-3">
+                <h6 class="fw-bold text-warning">Potential Conditions:</h6>
+                <ul class="list-unstyled">
+                    ${analysis.conditions.map(condition => `
+                        <li class="mb-2">
+                            <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                            <strong>${condition.name}</strong>: ${condition.description}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            <div class="mb-3">
+                <h6 class="fw-bold text-info">Recommended Actions:</h6>
+                <ul class="list-unstyled">
+                    ${analysis.recommendations.map(rec => `
+                        <li class="mb-1">
+                            <i class="bi bi-check-circle me-2 text-success"></i>
+                            ${rec}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Disclaimer:</strong> This analysis is for informational purposes only and should not replace professional medical advice. Please consult with a healthcare provider for proper diagnosis and treatment.
+            </div>
+        `;
+        
+        resultsCard.style.display = 'block';
+        resultsCard.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+</script>
+{% endblock %} 

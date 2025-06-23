@@ -1,0 +1,99 @@
+/* --- CRITICAL FIXES FOR NAVBAR AND WELCOME CARD --- */
+
+/* Navbar Positioning Fix */
+.navbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1030 !important;
+    background: #111 !important;
+}
+
+/* Main content spacing for fixed navbar */
+main {
+    margin-top: 80px !important;
+    padding-top: 20px !important;
+}
+
+/* Flash messages positioning */
+.container.mt-3 {
+    margin-top: 100px !important;
+}
+
+/* Welcome Card Text Visibility Fixes */
+.welcome-card .display-5 {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: bold !important;
+}
+
+.welcome-card .text-pink {
+    color: #ff69b4 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: bold !important;
+}
+
+.welcome-card .lead {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    font-weight: 500 !important;
+}
+
+.welcome-card p {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    font-weight: 400 !important;
+}
+
+/* Override inline styles with higher specificity */
+.welcome-card [style*="color: rgba(239, 240, 243, 0.45)"] {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: bold !important;
+}
+
+.welcome-card [style*="color:#bfc0c0"] {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+    font-weight: 400 !important;
+}
+
+/* Force all text in welcome card to be visible */
+.welcome-card .card-body * {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+.welcome-card .card-body .text-pink {
+    color: #ff69b4 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* Dashboard card text fixes */
+.dashboard-card .text-pink {
+    color: #ff69b4 !important;
+}
+
+.dashboard-card [style*="color:#bfc0c0"] {
+    color: #ffffff !important;
+}
+
+.info-card .text-pink {
+    color: #ff69b4 !important;
+}
+
+.info-card [style*="color:#bfc0c0"] {
+    color: #ffffff !important;
+}
+
+/* Motivational tips carousel fix */
+.carousel-item .fw-semibold {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+/* Alert positioning */
+.alert {
+    margin-top: 90px !important;
+} 

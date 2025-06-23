@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ title }}</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.medicine_name, class='form-control', placeholder='e.g., Paracetamol') }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.dosage, class='form-control', placeholder='e.g., 1 tablet, 10ml') }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.reminder_time, class='form-control') }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.frequency, class='form-select') }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.start_date, class='form-control') }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ render_field(form.end_date, class='form-control') }}
+                 <small class="form-text text-muted">Leave blank if ongoing.</small>
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ render_field(form.notes, class='form-control', rows=3, placeholder='e.g., Take after food') }}
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="{{ url_for('routes.pill_reminders') }}" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ action }} Reminder</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

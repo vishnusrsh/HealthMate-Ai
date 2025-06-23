@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col">
+            <h2 class="display-6">{{ title }}</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('routes.blood_donor_registration') }}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Register New Donor
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if donors %}
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Blood Group</th>
+                            <th scope="col">Contact Number</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Registered On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donor in donors %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ donor.name }}</td>
+                            <td><span class="badge bg-danger rounded-pill">{{ donor.blood_group }}</span></td>
+                            <td>{{ donor.contact_number }}</td>
+                            <td>{{ donor.email if donor.email else '-' }}</td>
+                            <td>{{ donor.registration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">No Active Donors Found</h4>
+        <p>There are currently no active blood donors registered in the system. Be the first to help!</p>
+        <hr>
+        <p class="mb-0">Click the button above to register as a new donor.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

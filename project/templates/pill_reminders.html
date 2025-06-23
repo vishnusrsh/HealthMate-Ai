@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>{{ title }}</h2>
+        <a href="{{ url_for('routes.add_pill_reminder') }}" class="btn btn-primary">Add New Reminder</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Notification Settings Card -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Notification Settings</h5>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h6 class="mb-2">Browser Notifications</h6>
+                    <p class="text-muted small mb-0">Get notified when it's time to take your medication. Notifications will appear even when the website is not active.</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="enableNotifications" class="btn btn-success btn-sm" style="display: none;">
+                        <i class="bi bi-bell"></i> Enable Notifications
+                    </button>
+                    <button id="disableNotifications" class="btn btn-secondary btn-sm" style="display: none;">
+                        <i class="bi bi-bell-slash"></i> Disable Notifications
+                    </button>
+                    <span id="notificationStatus" class="badge bg-info">Checking...</span>
+                </div>
+            </div>
+            <hr>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="soundEnabled" checked>
+                        <label class="form-check-label" for="soundEnabled">
+                            Play sound with notifications
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="vibrationEnabled" checked>
+                        <label class="form-check-label" for="vibrationEnabled">
+                            Vibrate device (if supported)
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="testNotification" class="btn btn-info btn-sm">
+                        <i class="bi bi-bell"></i> Test Notification
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if reminders %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Dosage</th>
+                        <th>Time</th>
+                        <th>Frequency</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Notes</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reminder in reminders %}
+                        <tr>
+                            <td>{{ reminder.medicine_name }}</td>
+                            <td>{{ reminder.dosage }}</td>
+                            <td>{{ reminder.reminder_time.strftime('%I:%M %p') }}</td>
+                            <td>{{ reminder.get_frequency_display() }}</td>
+                            <td>{{ reminder.start_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ reminder.end_date.strftime('%Y-%m-%d') if reminder.end_date else 'N/A' }}</td>
+                            <td>{{ reminder.notes if reminder.notes else '-' }}</td>
+                            <td>
+                                {% if reminder.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('routes.edit_pill_reminder', reminder_id=reminder.id) }}" class="btn btn-sm btn-outline-primary me-1" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ url_for('routes.delete_pill_reminder', reminder_id=reminder.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this reminder? This will mark it as inactive.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger me-1" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('routes.toggle_pill_reminder_active', reminder_id=reminder.id) }}" method="POST" class="d-inline">
+                                    {% if reminder.is_active %}
+                                        <button type="submit" class="btn btn-sm btn-outline-warning" title="Mark as Inactive">
+                                            <i class="fas fa-toggle-off"></i>
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Mark as Active">
+                                            <i class="fas fa-toggle-on"></i>
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            You have no pill reminders set up yet. <a href="{{ url_for('routes.add_pill_reminder') }}" class="alert-link">Add one now!</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Notification Settings JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const enableBtn = document.getElementById('enableNotifications');
+    const disableBtn = document.getElementById('disableNotifications');
+    const statusSpan = document.getElementById('notificationStatus');
+    const testNotificationBtn = document.getElementById('testNotification');
+
+    // Check reminders function
+    async function checkReminders() {
+        try {
+            const response = await fetch('/pill_reminder/check_due');
+            const data = await response.json();
+            
+            if (data.debug_info) {
+                console.log(`Debug info: Current time ${data.debug_info.current_time}, Active reminders: ${data.debug_info.total_active_reminders}`);
+            }
+            
+            if (data.count > 0) {
+                console.log(`Found ${data.count} due reminders: ${data.due_reminders.map(r => r.medicine_name).join(', ')}`);
+                // Trigger notifications if permission is granted
+                if (Notification.permission === 'granted' && window.pillNotifier) {
+                    window.pillNotifier.showNotifications(data.due_reminders);
+                }
+            }
+        } catch (error) {
+            console.error('Error checking reminders:', error);
+        }
+    }
+    
+    function updateNotificationUI() {
+        if ('Notification' in window) {
+            if (Notification.permission === 'granted') {
+                enableBtn.style.display = 'none';
+                disableBtn.style.display = 'inline-block';
+                statusSpan.textContent = 'Enabled';
+                statusSpan.className = 'badge bg-success';
+            } else if (Notification.permission === 'denied') {
+                enableBtn.style.display = 'none';
+                disableBtn.style.display = 'none';
+                statusSpan.textContent = 'Blocked';
+                statusSpan.className = 'badge bg-danger';
+            } else {
+                enableBtn.style.display = 'inline-block';
+                disableBtn.style.display = 'none';
+                statusSpan.textContent = 'Not Enabled';
+                statusSpan.className = 'badge bg-warning';
+            }
+        } else {
+            enableBtn.style.display = 'none';
+            disableBtn.style.display = 'none';
+            statusSpan.textContent = 'Not Supported';
+            statusSpan.className = 'badge bg-secondary';
+        }
+    }
+
+    enableBtn.addEventListener('click', async () => {
+        if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            log(`Notification permission request returned: ${permission}`);
+            updateNotificationUI();
+        }
+    });
+
+    disableBtn.addEventListener('click', () => {
+        alert('To disable notifications, you need to block them in your browser settings for this site.');
+    });
+
+    testNotificationBtn.addEventListener('click', () => {
+        if (Notification.permission === 'granted' && window.pillNotifier) {
+            log('Sending test notification...');
+            window.pillNotifier.showNotifications([{
+                medicine_name: 'Test Pill',
+                dosage: '1 tablet',
+            }]);
+        } else {
+            log('Could not send test notification. Permission not granted.');
+            alert('Please enable notifications first to send a test.');
+        }
+    });
+    
+    // Initial UI update
+    updateNotificationUI();
+
+    // Start checking for reminders every minute (if notifier is present)
+    if (window.pillNotifier) {
+        setInterval(checkReminders, 60000); 
+        checkReminders(); // Initial check
+    } else {
+        log('PillNotifier not found. Reminder checks are disabled.');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,169 @@
+/* Dashboard text color fixes - Only affects dashboard page */
+
+/* Welcome Card - Change to standard colors */
+.welcome-card {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+.welcome-card .display-5 {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: bold !important;
+}
+
+.welcome-card .text-pink {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: bold !important;
+}
+
+.welcome-card .lead {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: 500 !important;
+}
+
+.welcome-card p {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    font-weight: 400 !important;
+}
+
+/* Override inline styles for welcome card */
+.welcome-card [style*='color: rgba(239, 240, 243, 0.45)'] {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+.welcome-card [style*='color:#bfc0c0'] {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* Welcome card background image optimization */
+.welcome-card img {
+    object-fit: cover !important;
+    object-position: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    filter: none !important;
+    transition: filter 0.3s ease !important;
+}
+
+.welcome-card:hover img {
+    filter: brightness(1.1) !important;
+}
+
+/* Ensure text remains readable over the image */
+.welcome-card .card-body {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+/* Info cards below welcome card */
+.welcome-card + .container h4.text-pink {
+    color: #2c3e50 !important;
+}
+
+.info-card {
+    background: #ffffff !important;
+    color: #333333 !important;
+}
+
+.info-card .text-pink {
+    color: #3498db !important;
+}
+
+.info-card [style*='color:#bfc0c0'] {
+    color: #666666 !important;
+}
+
+.info-card .fw-bold {
+    color: #2c3e50 !important;
+}
+
+.info-card .text-secondary {
+    color: #6c757d !important;
+}
+
+/* Health challenges section */
+.health-challenges h4.text-pink {
+    color: #2c3e50 !important;
+}
+
+.health-challenges .text-muted {
+    color: #6c757d !important;
+}
+
+.health-challenges .fw-bold {
+    color: #2c3e50 !important;
+}
+
+/* Motivational Tips Section */
+.welcome-card + .container h4.text-pink {
+    color: #2c3e50 !important;
+}
+
+/* Carousel cards - change to standard colors */
+.info-card .fw-semibold {
+    color: #333333 !important;
+    text-shadow: none !important;
+}
+
+/* Our Services Section */
+.container.bg-black {
+    background: #f8f9fa !important;
+    color: #333333 !important;
+}
+
+.container.bg-black h4.text-pink {
+    color: #2c3e50 !important;
+}
+
+.container.bg-black p[style*="color:#bfc0c0"] {
+    color: #666666 !important;
+}
+
+/* Service Cards */
+.dashboard-card.bg-dark {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.dashboard-card .text-pink {
+    color: #3498db !important;
+}
+
+.dashboard-card [style*="color:#bfc0c0"] {
+    color: #666666 !important;
+}
+
+.dashboard-card .card-title {
+    color: #2c3e50 !important;
+}
+
+.dashboard-card .card-text {
+    color: #666666 !important;
+}
+
+/* Specific overrides for dashboard elements */
+.dashboard-card .stat-icon i {
+    color: #3498db !important;
+}
+
+.info-card .bi-quote {
+    color: #3498db !important;
+}
+
+/* Remove any remaining dark backgrounds */
+.bg-black {
+    background: #ffffff !important;
+}
+
+.bg-dark {
+    background: #ffffff !important;
+}

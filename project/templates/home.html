@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to HealthMate AI - Your AI Health Companion{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center py-5 fade-in-up" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white;">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-10">
+                <div class="position-relative" style="min-height: 340px;">
+                    <img src="https://i.pinimg.com/736x/bb/c6/85/bbc685e4cfa9cf54ab5afaa6c1b0e418.jpg" alt="AI Welcome Illustration" class="img-fluid rounded shadow-lg position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; filter: brightness(0.7); z-index: 1;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(30,34,44,0.45); z-index: 2;"></div>
+                    <div class="position-relative d-flex flex-column justify-content-center align-items-center h-100" style="z-index: 3; min-height: 340px;">
+                        <h1 class="display-4 fw-bold mb-4" style="color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,0.5);">
+                    <i class="bi bi-heart-pulse-fill text-danger me-3"></i>
+                    Welcome to HealthMate AI
+                </h1>
+                        <p class="lead mb-4" style="color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.4);">Your intelligent health companion powered by AI. Get personalized health insights, symptom analysis, and wellness guidance anytime, anywhere.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('routes.register') }}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>Get Started
+                    </a>
+                    <a href="{{ url_for('routes.login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('routes.dashboard') }}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-grid-1x2 me-2"></i>Go to Dashboard
+                    </a>
+                    <a href="{{ url_for('routes.chatbot') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-chat-dots me-2"></i>Start AI Chat
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Health Challenges -->
+<section class="py-5 bg-light fade-in-up">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3 text-health-primary">Featured 30-Day Health Challenges</h2>
+                <p class="lead text-muted">Join a challenge and build healthy habits with the community.</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card challenge-card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="challenge-icon mb-3"><i class="bi bi-droplet display-4 text-info"></i></div>
+                        <h5 class="fw-bold">Hydration Challenge</h5>
+                        <p class="text-muted">Drink 8+ glasses of water daily for 30 days to boost your energy and skin health.</p>
+                        <a href="{{ url_for('routes.health_challenges') }}" class="btn btn-primary btn-sm mt-2">Join Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card challenge-card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="challenge-icon mb-3"><i class="bi bi-bicycle display-4 text-success"></i></div>
+                        <h5 class="fw-bold">Exercise Challenge</h5>
+                        <p class="text-muted">Complete 20 minutes of physical activity every day for a month and feel the difference.</p>
+                        <a href="{{ url_for('routes.health_challenges') }}" class="btn btn-success btn-sm mt-2">Join Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card challenge-card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="challenge-icon mb-3"><i class="bi bi-moon-stars display-4 text-primary"></i></div>
+                        <h5 class="fw-bold">Meditation Challenge</h5>
+                        <p class="text-muted">Practice mindfulness or meditation for 10 minutes daily to reduce stress and improve focus.</p>
+                        <a href="{{ url_for('routes.health_challenges') }}" class="btn btn-info btn-sm mt-2">Join Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 fade-in-up">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3">Why Choose HealthMate AI?</h2>
+                <p class="lead text-muted">Experience the future of healthcare with our AI-powered features designed to enhance your wellness journey.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="AI Assistant" class="mb-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-robot display-4 text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">AI Health Assistant</h5>
+                        <p class="card-text text-muted">Get instant answers to your health questions with our advanced AI chatbot, trained on medical knowledge.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="BMI Calculator" class="mb-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-calculator display-4 text-info"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">BMI Calculator</h5>
+                        <p class="card-text text-muted">Calculate your Body Mass Index with age and gender-specific interpretations for accurate health assessment.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Health Tips" class="mb-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-lightbulb display-4 text-warning"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Health Tips</h5>
+                        <p class="card-text text-muted">Receive daily health tips and wellness advice from medical professionals and health experts.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1512070679279-c2f999098c01?auto=format&fit=crop&w=400&q=80" alt="Blood Donor Network" class="mb-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-droplet display-4 text-danger"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Blood Donor Network</h5>
+                        <p class="card-text text-muted">Connect with blood donors in your area or register as a donor to help save lives.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80" alt="Privacy & Security" class="mb-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-shield-check display-4 text-secondary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Privacy & Security</h5>
+                        <p class="card-text text-muted">Your health data is protected with enterprise-grade security and privacy measures.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Expert Health Tips Section -->
+<section class="py-5 bg-white fade-in-up" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') right bottom no-repeat; background-size: 400px; background-blend-mode: lighten;">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3 text-health-success">Expert Health Tips</h2>
+                <p class="lead text-muted">Daily advice from medical professionals to keep you at your best.</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card info-card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="tip-item mb-3"><i class="bi bi-cup-straw display-5 text-info"></i></div>
+                        <h6 class="fw-bold">Stay Hydrated</h6>
+                        <p class="text-muted">Drink water regularly throughout the day to maintain optimal body function.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card info-card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="tip-item mb-3"><i class="bi bi-person-walking display-5 text-success"></i></div>
+                        <h6 class="fw-bold">Move Every Hour</h6>
+                        <p class="text-muted">Take short walks or stretch to improve circulation and reduce fatigue.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card info-card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="tip-item mb-3"><i class="bi bi-moon-stars display-5 text-primary"></i></div>
+                        <h6 class="fw-bold">Prioritize Sleep</h6>
+                        <p class="text-muted">Aim for 7-8 hours of quality sleep to support your immune system and mental health.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light fade-in-up">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3 text-health-warning">What Our Users Say</h2>
+                <p class="lead text-muted">Trusted by thousands for a healthier, happier life.</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="rounded-circle mb-3" width="70" height="70">
+                        <blockquote class="blockquote mb-2">“HealthMate AI helped me track my health goals and stay motivated every day!”</blockquote>
+                        <footer class="blockquote-footer">Priya S., <cite title="Source Title">Student</cite></footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="rounded-circle mb-3" width="70" height="70">
+                        <blockquote class="blockquote mb-2">“The AI chat and symptom checker are so easy to use and accurate.”</blockquote>
+                        <footer class="blockquote-footer">Rahul M., <cite title="Source Title">Software Engineer</cite></footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="User" class="rounded-circle mb-3" width="70" height="70">
+                        <blockquote class="blockquote mb-2">“I love the daily health tips and the beautiful, easy-to-use interface.”</blockquote>
+                        <footer class="blockquote-footer">Dr. Meera K., <cite title="Source Title">Family Physician</cite></footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission Section -->
+<section class="py-5 bg-white fade-in-up">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-6 fw-bold mb-3 text-health-danger">Our Mission</h2>
+                <p class="lead text-muted">Empowering everyone to take charge of their health with accessible, AI-driven tools and compassionate support.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 fade-in-up" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white;">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-4">Ready to Start Your Health Journey?</h2>
+        <p class="lead mb-4">Join thousands of users who trust HealthMate AI for their health and wellness needs.</p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('routes.register') }}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-person-plus me-2"></i>Join Now - It's Free
+        </a>
+        {% else %}
+        <a href="{{ url_for('routes.dashboard') }}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-arrow-right me-2"></i>Continue to Dashboard
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Contact/Support Section -->
+<section class="py-5 bg-light fade-in-up">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-3 text-health-primary">Need Help or Support?</h2>
+        <p class="lead text-muted mb-4">Our team is here to assist you with any questions or feedback.</p>
+        <a href="mailto:support@healthmateai.com" class="btn btn-outline-primary btn-lg"><i class="bi bi-envelope me-2"></i>Contact Support</a>
+    </div>
+</section>
+
+<!-- Disclaimer Section -->
+<section class="py-4 bg-dark text-light fade-in-up">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <p class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                    <strong>Disclaimer:</strong> HealthMate AI is an educational tool and should not replace professional medical advice. Always consult with qualified healthcare providers for medical diagnosis and treatment.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

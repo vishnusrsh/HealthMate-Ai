@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Feedback Submissions{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">User Feedback</h2>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>Type</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fb in feedback_list %}
+          <tr>
+            <td>{{ fb.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{% if fb.user %}{{ fb.user.username }}{% else %}<span class="text-muted">Anonymous</span>{% endif %}</td>
+            <td><span class="badge {% if fb.type == 'Bug' %}bg-danger{% else %}bg-info text-dark{% endif %}">{{ fb.type }}</span></td>
+            <td style="max-width: 400px; white-space: pre-wrap;">{{ fb.message }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-center text-muted">No feedback submissions yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} 

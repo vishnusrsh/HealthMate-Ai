@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Manage Users</h2>
+        <a href="{{ url_for('routes.create_user') }}" class="btn btn-primary">
+            <i class="bi bi-person-plus me-2"></i>Add User
+        </a>
+    </div>
+    <form class="row mb-3" method="get">
+        <div class="col-md-4">
+            <input type="text" name="search" class="form-control" placeholder="Search by username or email" value="{{ request.args.get('search', '') }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </div>
+    </form>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                            <th>Admin</th>
+                            <th>Recent Activities</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-email="{{ user.email }}" data-phone="{{ user.phone or '' }}" data-age="{{ user.age or '' }}" class="user-row" data-bs-toggle="collapse" data-bs-target="#activities-{{ user.id }}" aria-expanded="false" aria-controls="activities-{{ user.id }}" style="cursor:pointer;">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone or '-' }}</td>
+                            <td>{{ user.age or '-' }}</td>
+                            <td>
+                                {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_admin %}
+                                    <span class="badge bg-primary">Admin</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">User</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <i class="bi bi-chevron-down"></i>
+                            </td>
+                            <td>
+                                {% if user.id != current_user.id %}
+                                <div class="btn-group" role="group">
+                                    <a href="#" class="btn btn-sm btn-outline-secondary edit-user-btn" data-user-id="{{ user.id }}">Edit</a>
+                                    <form action="{{ url_for('routes.toggle_user_active', user_id=user.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm {% if user.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                            {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('routes.toggle_admin', user_id=user.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm {% if user.is_admin %}btn-outline-warning{% else %}btn-outline-primary{% endif %}" title="{% if user.is_admin %}Remove Admin{% else %}Make Admin{% endif %}">
+                                            <i class="bi bi-person{% if user.is_admin %}-badge{% endif %}"></i>
+                                            {% if user.is_admin %}Remove Admin{% else %}Make Admin{% endif %}
+                                        </button>
+                                    </form>
+                                    <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">Delete</a>
+                                </div>
+                                {% else %}
+                                    <span class="text-muted small">(Current Admin)</span>
+                                {% endif %}
+                                <!-- Delete User Modal -->
+                                <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <form action="{{ url_for('routes.delete_user', user_id=user.id) }}" method="POST">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">Delete User</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          Are you sure you want to delete user <strong>{{ user.username }}</strong> ({{ user.email }})?
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                          <button type="submit" class="btn btn-danger">Delete</button>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="collapse bg-light" id="activities-{{ user.id }}">
+                            <td colspan="9">
+                                <div class="p-3">
+                                    <strong>Recent Activities</strong>
+                                    <ul class="list-unstyled mb-0 small">
+                                        {% for activity in user.recent_activities %}
+                                        <li>{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}: {{ activity.activity }}</li>
+                                        {% else %}
+                                        <li class="text-muted">No recent activity</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single Edit User Modal (outside the table) -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editUserForm" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger d-none" id="editUserError"></div>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" id="editUsername" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" id="editEmail" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" name="phone" id="editPhone">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-control" name="age" id="editAge" min="0">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let editUserId = null;
+  const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+  const editUserForm = document.getElementById('editUserForm');
+  const editUsername = document.getElementById('editUsername');
+  const editEmail = document.getElementById('editEmail');
+  const editPhone = document.getElementById('editPhone');
+  const editAge = document.getElementById('editAge');
+  const errorDiv = document.getElementById('editUserError');
+
+  // Open modal and populate fields
+  document.querySelectorAll('.edit-user-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      editUserId = btn.getAttribute('data-user-id');
+      const row = document.querySelector(`tr[data-user-id='${editUserId}']`);
+      editUsername.value = row.getAttribute('data-username');
+      editEmail.value = row.getAttribute('data-email');
+      editPhone.value = row.getAttribute('data-phone') || '';
+      editAge.value = row.getAttribute('data-age') || '';
+      errorDiv.classList.add('d-none');
+      errorDiv.textContent = '';
+      // Set form action
+      editUserForm.action = `/admin/edit_user/${editUserId}`;
+      editUserModal.show();
+    });
+  });
+
+  // AJAX submit
+  editUserForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    errorDiv.classList.add('d-none');
+    errorDiv.textContent = '';
+    const saveBtn = editUserForm.querySelector('button[type="submit"]');
+    saveBtn.disabled = true;
+    const formData = new FormData(editUserForm);
+    fetch(editUserForm.action, {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData
+    })
+    .then(resp => resp.json().then(data => ({status: resp.status, body: data})))
+    .then(({status, body}) => {
+      saveBtn.disabled = false;
+      if (body.success) {
+        // Update the table row with new username/email/phone/age
+        const row = document.querySelector(`tr[data-user-id='${editUserId}']`);
+        if (row) {
+          row.setAttribute('data-username', body.username);
+          row.setAttribute('data-email', body.email);
+          row.setAttribute('data-phone', body.phone || '');
+          row.setAttribute('data-age', body.age || '');
+          row.querySelector('td:nth-child(2)').textContent = body.username;
+          row.querySelector('td:nth-child(3)').textContent = body.email;
+          row.querySelector('td:nth-child(4)').textContent = body.phone || '-';
+          row.querySelector('td:nth-child(5)').textContent = body.age || '-';
+        }
+        editUserModal.hide();
+      } else {
+        errorDiv.textContent = body.message || 'Error updating user.';
+        errorDiv.classList.remove('d-none');
+      }
+    })
+    .catch(() => {
+      saveBtn.disabled = false;
+      errorDiv.textContent = 'Network or server error.';
+      errorDiv.classList.remove('d-none');
+    });
+  });
+});
+</script>
+{% endblock %}

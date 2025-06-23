@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block title %}Health Challenges - HealthMate AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <div class="challenge-header">
+                <h2 class="display-5 fw-bold text-primary mb-3">
+                    <i class="bi bi-trophy-fill me-3"></i>
+                    30-Day Health Challenges
+                </h2>
+                <p class="lead text-muted mb-4">Transform your health with our 30-day challenges. Build healthy habits and track your progress!</p>
+                <div class="challenge-stats">
+                    <div class="row justify-content-center">
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <i class="bi bi-people-fill text-primary"></i>
+                                <span class="stat-number">{{ available_challenges|length }}</span>
+                                <span class="stat-label">Available</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <i class="bi bi-lightning-fill text-warning"></i>
+                                <span class="stat-number">{{ active_challenges|length }}</span>
+                                <span class="stat-label">Active</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <i class="bi bi-award-fill text-success"></i>
+                                <span class="stat-number">{{ completed_challenges|length }}</span>
+                                <span class="stat-label">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Challenges -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header mb-4">
+                <h3 class="fw-bold">
+                    <i class="bi bi-list-check me-2 text-primary"></i>
+                    Available Challenges
+                </h3>
+                <p class="text-muted">Choose from our curated selection of health challenges designed to improve your wellbeing.</p>
+            </div>
+        </div>
+        
+        {% for challenge in available_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm challenge-card">
+                <div class="card-body text-center p-4">
+                    <div class="challenge-icon mb-4">
+                        <div class="icon-wrapper bg-{{ challenge.color }}">
+                            <i class="bi {{ challenge.icon }} display-4 text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">{{ challenge.name }}</h5>
+                    <p class="card-text text-muted mb-4">{{ challenge.description }}</p>
+                    <div class="challenge-details mb-4">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="detail-item">
+                                    <i class="bi bi-target text-{{ challenge.color }} mb-2"></i>
+                                    <div class="detail-value">{{ challenge.target_value }}</div>
+                                    <div class="detail-label">Daily Target</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="detail-item">
+                                    <i class="bi bi-calendar text-{{ challenge.color }} mb-2"></i>
+                                    <div class="detail-value">{{ challenge.duration_days }}</div>
+                                    <div class="detail-label">Days</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="{{ url_for('routes.join_challenge', challenge_id=challenge.id) }}" method="POST">
+                        <button type="submit" class="btn btn-{{ challenge.color }} btn-lg w-100">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Start Challenge
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Active Challenges -->
+    {% if active_challenges %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header mb-4">
+                <h3 class="fw-bold">
+                    <i class="bi bi-lightning-fill me-2 text-warning"></i>
+                    Your Active Challenges
+                </h3>
+                <p class="text-muted">Keep up the great work! Track your progress and stay motivated.</p>
+            </div>
+        </div>
+        
+        {% for user_challenge in active_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm active-challenge-card">
+                <div class="card-header bg-gradient-{{ user_challenge.challenge.color }} text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="bi {{ user_challenge.challenge.icon }} me-2"></i>
+                        <h6 class="mb-0">{{ user_challenge.challenge.name }}</h6>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Progress</span>
+                            <span class="small text-muted">{{ user_challenge.total_completed_days }}/{{ user_challenge.challenge.duration_days }} days</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            {% set progress_percent = (user_challenge.total_completed_days / user_challenge.challenge.duration_days * 100) | round %}
+                            <div class="progress-bar bg-{{ user_challenge.challenge.color }}" 
+                                 style="width: {{ progress_percent }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="row text-center mb-4">
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-value text-{{ user_challenge.challenge.color }} fw-bold">{{ user_challenge.current_streak }}</div>
+                                <div class="stat-label small text-muted">Current Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-value text-success fw-bold">{{ user_challenge.longest_streak }}</div>
+                                <div class="stat-label small text-muted">Best Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-value text-info fw-bold">{{ user_challenge.days_remaining }}</div>
+                                <div class="stat-label small text-muted">Days Left</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Progress -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">Today's Progress</h6>
+                        {% if user_challenge.today_progress %}
+                        <div class="alert alert-success py-3">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <div>
+                                    <strong>Completed!</strong>
+                                    <div class="small">{{ user_challenge.today_progress.value }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <form action="{{ url_for('routes.mark_challenge_complete', user_challenge_id=user_challenge.id) }}" method="POST">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="value" 
+                                       placeholder="{{ user_challenge.challenge.target_value }}" required>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('routes.challenge_details', user_challenge_id=user_challenge.id) }}" 
+                           class="btn btn-outline-{{ user_challenge.challenge.color }}">
+                            <i class="bi bi-graph-up me-2"></i>
+                            View Details
+                        </a>
+                        <form action="{{ url_for('routes.quit_challenge', user_challenge_id=user_challenge.id) }}" method="POST" 
+                              onsubmit="return confirm('Are you sure you want to quit this challenge?')">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Quit Challenge
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Completed Challenges -->
+    {% if completed_challenges %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="section-header mb-4">
+                <h3 class="fw-bold">
+                    <i class="bi bi-award-fill me-2 text-success"></i>
+                    Completed Challenges
+                </h3>
+                <p class="text-muted">Congratulations on your achievements! Here are your completed challenges.</p>
+            </div>
+        </div>
+        
+        {% for user_challenge in completed_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm completed-challenge-card">
+                <div class="card-body text-center p-4">
+                    <div class="challenge-icon mb-3">
+                        <div class="icon-wrapper bg-success">
+                            <i class="bi {{ user_challenge.challenge.icon }} display-4 text-white"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">{{ user_challenge.challenge.name }}</h5>
+                    <p class="card-text text-muted">Completed on {{ user_challenge.end_date.strftime('%B %d, %Y') }}</p>
+                    <div class="achievement-stats mb-3">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-value text-success fw-bold">{{ user_challenge.total_completed_days }}</div>
+                                <div class="stat-label small text-muted">Days Completed</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-value text-warning fw-bold">{{ user_challenge.longest_streak }}</div>
+                                <div class="stat-label small text-muted">Best Streak</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="badge bg-success fs-6 py-2 px-3">
+                        <i class="bi bi-trophy me-2"></i>
+                        Challenge Completed!
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Challenge Tips -->
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm challenge-tips-card">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Challenge Tips for Success
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="tip-item">
+                                <i class="bi bi-calendar-check display-4 text-primary mb-3"></i>
+                                <h6 class="fw-bold">Set Reminders</h6>
+                                <p class="small text-muted">Use daily reminders to stay on track with your challenges.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="tip-item">
+                                <i class="bi bi-graph-up display-4 text-success mb-3"></i>
+                                <h6 class="fw-bold">Track Progress</h6>
+                                <p class="small text-muted">Monitor your daily progress and celebrate small wins.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="tip-item">
+                                <i class="bi bi-people display-4 text-warning mb-3"></i>
+                                <h6 class="fw-bold">Stay Motivated</h6>
+                                <p class="small text-muted">Share your progress with friends and family for support.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user_challenge.challenge.name }} - Challenge Details{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header with Breadcrumb -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('routes.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('routes.health_challenges') }}">Health Challenges</a></li>
+                    <li class="breadcrumb-item active">{{ user_challenge.challenge.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Challenge Overview Card -->
+    <div class="row mb-4">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-gradient-{{ user_challenge.challenge.color }} text-white py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="challenge-icon-large me-4">
+                                    <i class="bi {{ user_challenge.challenge.icon }} display-1"></i>
+                                </div>
+                                <div>
+                                    <h2 class="mb-2">{{ user_challenge.challenge.name }}</h2>
+                                    <p class="mb-0 lead">{{ user_challenge.challenge.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            {% if user_challenge.is_active %}
+                                <span class="badge bg-success fs-6 py-2 px-3">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary fs-6 py-2 px-3">Completed</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Progress Overview -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="progress-overview">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0 fw-bold">Overall Progress</h5>
+                                    <span class="badge bg-{{ user_challenge.challenge.color }} fs-6">
+                                        {{ user_challenge.total_completed_days }}/{{ user_challenge.challenge.duration_days }} days
+                                    </span>
+                                </div>
+                                <div class="progress" style="height: 25px;">
+                                    {% set progress_percent = (user_challenge.total_completed_days / user_challenge.challenge.duration_days * 100) | round %}
+                                    <div class="progress-bar bg-{{ user_challenge.challenge.color }}" 
+                                         style="width: {{ progress_percent }}%">
+                                        <span class="progress-text">{{ progress_percent }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <div class="stat-icon mb-2">
+                                    <i class="bi bi-calendar-check display-4 text-success"></i>
+                                </div>
+                                <div class="stat-value text-success fw-bold display-6">{{ user_challenge.total_completed_days }}</div>
+                                <div class="stat-label text-muted">Days Completed</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <div class="stat-icon mb-2">
+                                    <i class="bi bi-lightning-fill display-4 text-warning"></i>
+                                </div>
+                                <div class="stat-value text-warning fw-bold display-6">{{ user_challenge.current_streak }}</div>
+                                <div class="stat-label text-muted">Current Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <div class="stat-icon mb-2">
+                                    <i class="bi bi-trophy-fill display-4 text-info"></i>
+                                </div>
+                                <div class="stat-value text-info fw-bold display-6">{{ user_challenge.longest_streak }}</div>
+                                <div class="stat-label text-muted">Best Streak</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <div class="stat-icon mb-2">
+                                    <i class="bi bi-percent display-4 text-primary"></i>
+                                </div>
+                                <div class="stat-value text-primary fw-bold display-6">{{ completion_rate|round(1) }}%</div>
+                                <div class="stat-label text-muted">Completion Rate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge Info -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card p-3">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>Challenge Details
+                                </h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="bi bi-calendar me-2 text-muted"></i>
+                                        <strong>Started:</strong> {{ user_challenge.start_date.strftime('%B %d, %Y') }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-calendar-check me-2 text-muted"></i>
+                                        <strong>Ends:</strong> {{ user_challenge.end_date.strftime('%B %d, %Y') }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-target me-2 text-muted"></i>
+                                        <strong>Daily Target:</strong> {{ user_challenge.challenge.target_value }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-clock me-2 text-muted"></i>
+                                        <strong>Duration:</strong> {{ user_challenge.challenge.duration_days }} days
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-graph-up me-2"></i>Performance Summary
+                                </h6>
+                                <div class="performance-stats">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Completion Rate:</span>
+                                        <span class="fw-bold">{{ completion_rate|round(1) }}%</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Days Remaining:</span>
+                                        <span class="fw-bold">{{ days_remaining }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Average Daily:</span>
+                                        <span class="fw-bold">{{ (user_challenge.total_completed_days / total_days * 100)|round(1) }}%</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Status:</span>
+                                        <span class="badge {% if user_challenge.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {% if user_challenge.is_active %}Active{% else %}Completed{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Calendar -->
+    <div class="row mb-4">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        Daily Progress Calendar
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="progress-calendar">
+                        {% for week in calendar_data %}
+                        <div class="calendar-week mb-2">
+                            {% for day in week %}
+                            <div class="calendar-day {% if day.completed %}completed{% elif day.is_today %}today{% elif day.is_past %}missed{% else %}future{% endif %}">
+                                <div class="day-number">{{ day.day_number }}</div>
+                                <div class="day-status">
+                                    {% if day.completed %}
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    {% elif day.is_today %}
+                                        <i class="bi bi-circle text-primary"></i>
+                                    {% elif day.is_past %}
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                    {% endif %}
+                                </div>
+                                {% if day.value %}
+                                <div class="day-value">{{ day.value }}</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="calendar-legend mt-4">
+                            <div class="d-flex justify-content-center gap-4 flex-wrap">
+                                <div class="legend-item">
+                                    <span class="legend-color completed"></span>
+                                    <span class="legend-text">Completed</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color missed"></span>
+                                    <span class="legend-text">Missed</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color today"></span>
+                                    <span class="legend-text">Today</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color future"></span>
+                                    <span class="legend-text">Future</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Progress Table -->
+    <div class="row mb-4">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check me-2"></i>
+                        Recent Progress
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if progress_entries %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Value</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in progress_entries[-10:]|reverse %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-calendar-date me-2 text-muted"></i>
+                                            {{ entry.date.strftime('%B %d, %Y') }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if entry.completed %}
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>Completed
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle me-1"></i>Missed
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ entry.value or 'N/A' }}</span>
+                                    </td>
+                                    <td>{{ entry.notes or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
+                        <p class="text-muted mb-3">No progress entries yet. Start your challenge today!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-lg-10 mx-auto text-center">
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{{ url_for('routes.health_challenges') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Back to Challenges
+                </a>
+                {% if user_challenge.is_active %}
+                <form action="{{ url_for('routes.quit_challenge', user_challenge_id=user_challenge.id) }}" method="POST" class="d-inline" 
+                      onsubmit="return confirm('Are you sure you want to quit this challenge?')">
+                    <button type="submit" class="btn btn-outline-danger btn-lg">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Quit Challenge
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

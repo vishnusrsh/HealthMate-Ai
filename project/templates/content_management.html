@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %}Content Management - Admin{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4"><i class="bi bi-journal-text me-2"></i>Content Management</h2>
+  <ul class="nav nav-tabs mb-4" id="contentTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="site-content-tab" data-bs-toggle="tab" data-bs-target="#site-content" type="button" role="tab" aria-controls="site-content" aria-selected="true">Site Content</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="health-tips-tab" data-bs-toggle="tab" data-bs-target="#health-tips" type="button" role="tab" aria-controls="health-tips" aria-selected="false">Health Tips</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="faq-tab" data-bs-toggle="tab" data-bs-target="#faq" type="button" role="tab" aria-controls="faq" aria-selected="false">FAQ</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="testimonials-tab" data-bs-toggle="tab" data-bs-target="#testimonials" type="button" role="tab" aria-controls="testimonials" aria-selected="false">Testimonials</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="announcements-tab" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab" aria-controls="announcements" aria-selected="false">Announcements</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="contentTabContent">
+    <!-- Site Content Tab -->
+    <div class="tab-pane fade show active" id="site-content" role="tabpanel" aria-labelledby="site-content-tab">
+      <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-file-earmark-text me-2"></i>Site Content</span>
+          <button class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Add New</button>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>Home Page Welcome Message</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>About Us Section</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>Contact/Support Info</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Health Tips Tab -->
+    <div class="tab-pane fade" id="health-tips" role="tabpanel" aria-labelledby="health-tips-tab">
+      <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-gradient-success text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-lightbulb me-2"></i>Health Tips</span>
+          <button class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Add New</button>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>Drink at least 8 glasses of water daily.</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>Take a 10-minute walk after meals.</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- FAQ Tab -->
+    <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
+      <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-question-circle me-2"></i>Frequently Asked Questions</span>
+          <button class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Add New</button>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>How do I join a health challenge?</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>How is my data protected?</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Testimonials Tab -->
+    <div class="tab-pane fade" id="testimonials" role="tabpanel" aria-labelledby="testimonials-tab">
+      <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-gradient-warning text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-chat-quote me-2"></i>User Testimonials</span>
+          <button class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Add New</button>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>"HealthMate AI helped me track my health goals and stay motivated every day!"</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>"The AI chat and symptom checker are so easy to use and accurate."</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Announcements Tab -->
+    <div class="tab-pane fade" id="announcements" role="tabpanel" aria-labelledby="announcements-tab">
+      <div class="card border-0 shadow mb-4">
+        <div class="card-header bg-gradient-danger text-white d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-megaphone me-2"></i>Announcements</span>
+          <button class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Add New</button>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>New feature: Prescription Analyzer is now live!</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>30-Day Meditation Challenge starts next week!</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-pencil"></i> Edit</button>
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

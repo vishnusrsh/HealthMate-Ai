@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HealthMate AI{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fixes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-fixes.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="">
+<!-- Professional Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: #111;">
+  <div class="container">
+      {% if current_user.is_authenticated %}
+    <!-- Sidebar Toggle Button (moved to be first) -->
+      <button class="btn btn-link text-white fs-3 me-2 p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-label="Open menu">
+        <i class="bi bi-list"></i>
+      </button>
+      {% endif %}
+      <!-- Brand -->
+    <a class="navbar-brand fw-bold d-flex align-items-center me-auto" href="{{ url_for('routes.dashboard') }}">
+        <i class="bi bi-heart-pulse-fill me-2 text-danger"></i>
+        HealthMate AI
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        {% if current_user.is_authenticated %}
+        
+        <!-- Moved Items from Sidebar -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.body_map') }}">Body Map</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.health_challenges') }}">Challenges</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.prescription_analyzer') }}">Prescription Analyzer</a>
+        </li>
+
+        <!-- User Profile Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center user-profile-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar me-2">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <span class="user-name">{{ current_user.username }}</span>
+            {% if current_user.is_admin %}
+              <span class="admin-badge ms-2">Admin</span>
+            {% endif %}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end user-profile-menu">
+            <li class="dropdown-header">
+              <div class="user-info">
+                <div class="user-avatar-large">
+                  <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="user-details">
+                  <div class="user-name-large">{{ current_user.username }}</div>
+                  <div class="user-email">{{ current_user.email }}</div>
+                  {% if current_user.is_admin %}
+                    <div class="admin-status">Administrator</div>
+                  {% endif %}
+                </div>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            
+            <!-- Edit Profile Link -->
+            <li>
+              <a class="dropdown-item profile-item" href="{{ url_for('routes.edit_profile') }}">
+                <i class="bi bi-person-gear me-2"></i>
+                Edit Profile
+              </a>
+            </li>
+            
+            <!-- Admin Link (if admin) -->
+            {% if current_user.email == 'vishnu@gmail.com' or current_user.is_admin %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item admin-item" href="{{ url_for('routes.admin_dashboard') }}">
+                <i class="bi bi-shield-check me-2"></i>
+                Admin Dashboard
+              </a>
+            </li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            
+            <li>
+              <a class="dropdown-item logout-item" href="{{ url_for('routes.logout') }}">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+              </a>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center" href="{{ url_for('routes.login') }}">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            Login
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{{ url_for('routes.register') }}">
+            <i class="bi bi-person-plus me-1"></i>
+            Register
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Sidebar Offcanvas -->
+{% if current_user.is_authenticated %}
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; width: 270px;">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title fw-bold" id="sidebarMenuLabel"><i class="bi bi-list me-2"></i>Menu</h5>
+    <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <ul class="nav flex-column py-3">
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.dashboard') }}"><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.chatbot') }}"><i class="bi bi-chat-dots-fill me-2"></i>AI Chat</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.body_map') }}"><i class="bi bi-body-text me-2"></i>Body Map</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.health_challenges') }}"><i class="bi bi-trophy-fill me-2"></i>Health Challenges</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.prescription_analyzer') }}"><i class="bi bi-file-earmark-medical me-2"></i>Prescription Analyzer</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center px-4 py-2" href="{{ url_for('routes.pill_reminders') }}"><i class="bi bi-capsule-pill me-2"></i>Pill Reminders</a>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<!-- Flash Messages -->
+<div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</div>
+
+<!-- Main Content -->
+<main class="py-4">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="text-light pt-5 pb-3 mt-5 border-top" style="background-color: #28a745;">
+  <div class="container">
+    <div class="row gy-4 align-items-start">
+      <!-- Logo & Mission -->
+      <div class="col-md-4 text-center text-md-start">
+        <div class="mb-2">
+          <span class="fw-bold fs-5"><i class="bi bi-heart-pulse-fill text-danger me-2"></i>HealthMate AI</span>
+        </div>
+        <div class="text-muted small mb-2">Your AI-powered health companion</div>
+        <div class="text-secondary small mb-3">Empowering you to take charge of your health journey with smart tools, reminders, and expert insights.</div>
+      </div>
+      <!-- Quick Links -->
+      <div class="col-md-2 text-center text-md-start">
+        <div class="fw-semibold mb-2 small text-uppercase">Quick Links</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="{{ url_for('routes.dashboard') }}" class="text-light text-decoration-none small">Dashboard</a></li>
+          <li><a href="{{ url_for('routes.chatbot') }}" class="text-light text-decoration-none small">AI Chat</a></li>
+          <li><a href="{{ url_for('routes.health_challenges') }}" class="text-light text-decoration-none small">Challenges</a></li>
+          <li><a href="{{ url_for('routes.pill_reminders') }}" class="text-light text-decoration-none small">Reminders</a></li>
+          <li><a href="{{ url_for('routes.bmi_calculator') }}" class="text-light text-decoration-none small">BMI Calculator</a></li>
+        </ul>
+      </div>
+      <!-- Resources -->
+      <div class="col-md-2 text-center text-md-start">
+        <div class="fw-semibold mb-2 small text-uppercase">Resources</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="#" class="text-light text-decoration-none small">FAQ</a></li>
+          <li><a href="#" class="text-light text-decoration-none small">Support</a></li>
+          <li><a href="#" class="text-light text-decoration-none small">Blog</a></li>
+          <li><a href="#" class="text-light text-decoration-none small">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <!-- Contact & Social -->
+      <div class="col-md-4 text-center text-md-end">
+        <div class="fw-semibold mb-2 small text-uppercase">Contact Us</div>
+        <div class="mb-2">
+          <span class="small text-muted d-block"><i class="bi bi-envelope me-1"></i>support@healthmateai.com</span>
+          <span class="small text-muted d-block"><i class="bi bi-telephone me-1"></i>+1 (555) 123-4567</span>
+          <span class="small text-muted d-block"><i class="bi bi-geo-alt me-1"></i>123 Wellness Ave, Healthy City</span>
+        </div>
+        <div class="fw-semibold mb-2 small text-uppercase">Follow Us</div>
+        <div class="mb-2">
+          <a href="#" class="text-light me-2 fs-5"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="text-light me-2 fs-5"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="text-light me-2 fs-5"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-light fs-5"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+    <hr class="border-secondary opacity-25 my-3">
+    <div class="row">
+      <div class="col text-center">
+        <span class="text-muted small">&copy; 2024 HealthMate AI. All rights reserved.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- In-app Feedback Button and Modal -->
+<button type="button" class="btn btn-primary rounded-circle shadow-lg position-fixed" style="bottom: 32px; right: 32px; z-index: 1050; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;" data-bs-toggle="modal" data-bs-target="#feedbackModal" title="Send Feedback">
+  <i class="bi bi-chat-dots fs-4"></i>
+</button>
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feedbackModalLabel"><i class="bi bi-chat-dots me-2 text-primary"></i>Send Feedback</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{ url_for('routes.submit_feedback') }}">
+          <div class="mb-3">
+            <label for="feedbackType" class="form-label">Type</label>
+            <select class="form-select" id="feedbackType" name="type" required>
+              <option value="Bug">Report a Bug</option>
+              <option value="Suggestion">Suggest a Feature</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="feedbackText" class="form-label">Your Feedback</label>
+            <textarea class="form-control" id="feedbackText" name="feedback" rows="4" placeholder="Describe the bug or your idea..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Pill Reminder Notification System -->
+{% if current_user.is_authenticated %}
+<script>
+// Pill Reminder Notification System
+class PillReminderNotifier {
+    constructor() {
+        this.checkInterval = null;
+        this.lastChecked = null;
+        this.notificationPermission = false;
+        this.init();
+    }
+
+    async init() {
+        // Request notification permission
+        if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            this.notificationPermission = permission === 'granted';
+        }
+
+        // Start checking for reminders
+        this.startChecking();
+    }
+
+    startChecking() {
+        // Check immediately
+        this.checkReminders();
+        
+        // Then check every minute
+        this.checkInterval = setInterval(() => {
+            this.checkReminders();
+        }, 60000); // 60 seconds
+    }
+
+    async checkReminders() {
+        try {
+            const response = await fetch('/pill_reminder/check_due');
+            const data = await response.json();
+            
+            if (data.count > 0) {
+                this.showNotifications(data.due_reminders);
+            }
+        } catch (error) {
+            console.error('Error checking reminders:', error);
+        }
+    }
+
+    showNotifications(reminders) {
+        if (!this.notificationPermission) return;
+
+        reminders.forEach(reminder => {
+            // Create a simple heart icon as data URL
+            const iconDataUrl = 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e74c3c">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            `);
+
+            // Create notification
+            const notification = new Notification('HealthMate AI - Pill Reminder', {
+                body: `Time to take ${reminder.medicine_name}${reminder.dosage ? ' - ' + reminder.dosage : ''}${reminder.notes ? '\n' + reminder.notes : ''}`,
+                icon: iconDataUrl,
+                badge: iconDataUrl,
+                tag: `pill-reminder-${reminder.id}`,
+                requireInteraction: true,
+                actions: [
+                    {
+                        action: 'mark-taken',
+                        title: 'Mark as Taken'
+                    },
+                    {
+                        action: 'snooze',
+                        title: 'Snooze 15 min'
+                    }
+                ]
+            });
+
+            // Handle notification clicks
+            notification.onclick = function() {
+                window.focus();
+                window.location.href = '/pill_reminders';
+                notification.close();
+            };
+
+            // Handle notification actions
+            notification.onaction = function(event) {
+                if (event.action === 'mark-taken') {
+                    // You can implement marking as taken here
+                    console.log('Marked as taken:', reminder.medicine_name);
+                } else if (event.action === 'snooze') {
+                    // Snooze for 15 minutes
+                    setTimeout(() => {
+                        this.showNotifications([reminder]);
+                    }, 15 * 60 * 1000);
+                }
+                notification.close();
+            }.bind(this);
+
+            // Auto-close after 5 minutes
+            setTimeout(() => {
+                notification.close();
+            }, 5 * 60 * 1000);
+        });
+
+        // Also show in-page notification
+        this.showInPageNotification(reminders);
+    }
+
+    showInPageNotification(reminders) {
+        // Create or update in-page notification
+        let notificationContainer = document.getElementById('pill-reminder-notifications');
+        
+        if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.id = 'pill-reminder-notifications';
+            notificationContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                max-width: 400px;
+            `;
+            document.body.appendChild(notificationContainer);
+        }
+
+        // Clear existing notifications
+        notificationContainer.innerHTML = '';
+
+        reminders.forEach(reminder => {
+            const notificationCard = document.createElement('div');
+            notificationCard.className = 'alert alert-warning alert-dismissible fade show shadow';
+            notificationCard.style.cssText = `
+                margin-bottom: 10px;
+                border-left: 4px solid #ffc107;
+                background: white;
+            `;
+            
+            notificationCard.innerHTML = `
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-capsule-pill text-warning me-2 mt-1"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="alert-heading mb-1">Pill Reminder</h6>
+                        <p class="mb-1"><strong>${reminder.medicine_name}</strong>${reminder.dosage ? ' - ' + reminder.dosage : ''}</p>
+                        <p class="mb-1 small text-muted">Time: ${reminder.time} | ${reminder.frequency}</p>
+                        ${reminder.notes ? `<p class="mb-2 small">${reminder.notes}</p>` : ''}
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-success btn-sm" onclick="markReminderTaken(${reminder.id})">
+                                <i class="bi bi-check"></i> Taken
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="snoozeReminder(${reminder.id})">
+                                <i class="bi bi-clock"></i> Snooze
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            notificationContainer.appendChild(notificationCard);
+        });
+    }
+}
+
+// Global functions for notification actions
+async function markReminderTaken(reminderId) {
+    try {
+        const response = await fetch(`/pill_reminder/mark_taken/${reminderId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Remove the notification
+            const notification = document.querySelector(`[onclick*="${reminderId}"]`).closest('.alert');
+            if (notification) notification.remove();
+            
+            // Show success message
+            showToast('Reminder marked as taken!', 'success');
+        } else {
+            showToast('Error marking reminder as taken', 'error');
+        }
+    } catch (error) {
+        console.error('Error marking reminder as taken:', error);
+        showToast('Error marking reminder as taken', 'error');
+    }
+}
+
+function snoozeReminder(reminderId) {
+    // Snooze for 15 minutes
+    console.log('Snoozed reminder:', reminderId);
+    const notification = document.querySelector(`[onclick*="${reminderId}"]`).closest('.alert');
+    if (notification) {
+        notification.remove();
+        setTimeout(() => {
+            // Re-check reminders after 15 minutes
+            if (window.pillNotifier) {
+                window.pillNotifier.checkReminders();
+            }
+        }, 15 * 60 * 1000);
+    }
+}
+
+// Simple toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = `
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+        min-width: 300px;
+    `;
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+    `;
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+// Initialize the notification system when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Notification !== 'undefined') {
+        window.pillNotifier = new PillReminderNotifier();
+    }
+});
+</script>
+{% endif %}
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
