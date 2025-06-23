@@ -1,8 +1,8 @@
-# HealthMate-Ai
+
 
 # HealthMate AI 🩺🤖
 
-HealthMate AI is an intelligent health assistant web application that helps users monitor their health through features like symptom checking, BMI calculation, nutrition analysis from food images, daily health tips, and more. Built using **Flask**, integrated with **Gemini AI**, and styled with a professional UI similar to Alibaba.
+HealthMate AI is an intelligent health assistant web application that helps users monitor their health through features like symptom checking, BMI calculation, prescription analysis images, daily health tips,health challenges and more. Built using **Flask**, integrated with **Gemini AI**, and styled with a professional UI similar to Alibaba.
 
 ## 🔥 Features
 
